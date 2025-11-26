@@ -170,9 +170,6 @@ Si encuentras bugs o quieres mejorar la aplicación, siéntete libre de:
 
 ---
 Probar con este enlace:
-magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3
-  A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-p
-  aradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2
-  Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com
+magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c&dn=Big+Buck+Bunny
 
 **¡Disfruta del streaming! 🍿**

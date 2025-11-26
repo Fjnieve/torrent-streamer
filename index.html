@@ -270,11 +270,18 @@
             <p>4. ¡Disfruta del streaming!</p>
         </div>
 
+        <div class="info-box" style="background: #ffebee; border-left-color: #f44336;">
+            <h3 style="color: #f44336;">🚨 LIMITACIÓN IMPORTANTE - WebRTC</h3>
+            <p style="font-size: 1.05em; margin-bottom: 10px;"><strong>WebTorrent SOLO se conecta con otros peers WebRTC (navegadores)</strong></p>
+            <p><strong>❌ NO compatible con:</strong> qBittorrent, uTorrent, Transmission, etc.</p>
+            <p><strong>⚠️ Resultado:</strong> Aunque un torrent tenga 1000 seeds, si ninguna es WebRTC, verás 0 peers</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">💡 <em>La red WebTorrent es muy pequeña. Para torrents populares, usa servicios como Seedr.cc</em></p>
+        </div>
+
         <div class="info-box" style="background: #fff3e0; border-left-color: #ff9800;">
             <h3 style="color: #ff9800;">⚠️ Formatos compatibles:</h3>
             <p><strong>✅ Totalmente compatibles:</strong> MP4, WebM, MP3, WAV, OGG, M4A</p>
             <p><strong>⚠️ Compatibilidad limitada:</strong> MKV, AVI (pueden no funcionar en todos los navegadores)</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">💡 <em>Recomendación: Usa torrents en formato MP4 para mejor compatibilidad</em></p>
         </div>
 
         <div class="upload-section">
@@ -304,26 +311,33 @@
 
         <div id="status" class="status"></div>
 
+        <!-- Estado de Conexión Destacado -->
+        <div id="connectionStatus" style="display: none; margin: 20px 0; padding: 20px; border-radius: 10px; text-align: center; font-size: 1.2em; font-weight: bold;">
+            <div id="connectionIcon" style="font-size: 3em; margin-bottom: 10px;">⏳</div>
+            <div id="connectionText">Buscando peers...</div>
+            <div id="peerCount" style="margin-top: 10px; font-size: 1.5em; color: #667eea;">0 peers conectados</div>
+        </div>
+
         <div id="progressBar" class="progress-bar">
             <div id="progressFill" class="progress-fill">0%</div>
         </div>
 
         <div id="stats" class="stats">
+            <div class="stat-item" style="background: #e8f5e9; border: 2px solid #4caf50;">
+                <div class="stat-value" id="peers" style="color: #4caf50; font-size: 2em;">0</div>
+                <div class="stat-label" style="font-weight: bold;">🌐 Peers WebRTC</div>
+            </div>
             <div class="stat-item">
                 <div class="stat-value" id="downloadSpeed">0 KB/s</div>
-                <div class="stat-label">Descarga</div>
+                <div class="stat-label">📥 Descarga</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value" id="uploadSpeed">0 KB/s</div>
-                <div class="stat-label">Subida</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="peers">0</div>
-                <div class="stat-label">Peers</div>
+                <div class="stat-label">📤 Subida</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value" id="downloaded">0 MB</div>
-                <div class="stat-label">Descargado</div>
+                <div class="stat-label">💾 Descargado</div>
             </div>
         </div>
 

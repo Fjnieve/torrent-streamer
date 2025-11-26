@@ -19,6 +19,12 @@ const stopBtn = document.getElementById('stopBtn');
 const clearBtn = document.getElementById('clearBtn');
 const stats = document.getElementById('stats');
 
+// Elementos de estado de conexión
+const connectionStatus = document.getElementById('connectionStatus');
+const connectionIcon = document.getElementById('connectionIcon');
+const connectionText = document.getElementById('connectionText');
+const peerCountDiv = document.getElementById('peerCount');
+
 // Elementos de estadísticas
 const downloadSpeedEl = document.getElementById('downloadSpeed');
 const uploadSpeedEl = document.getElementById('uploadSpeed');
@@ -64,10 +70,36 @@ function formatSpeed(bytesPerSecond) {
 function updateStats() {
     if (!currentTorrent) return;
 
-    downloadSpeedEl.textContent = formatSpeed(currentTorrent.downloadSpeed);
+    const numPeers = currentTorrent.numPeers;
+    const downloadSpeed = currentTorrent.downloadSpeed;
+
+    downloadSpeedEl.textContent = formatSpeed(downloadSpeed);
     uploadSpeedEl.textContent = formatSpeed(currentTorrent.uploadSpeed);
-    peersEl.textContent = currentTorrent.numPeers;
+    peersEl.textContent = numPeers;
     downloadedEl.textContent = formatBytes(currentTorrent.downloaded);
+
+    // Actualizar estado de conexión visual
+    peerCountDiv.textContent = `${numPeers} peers conectados`;
+
+    if (numPeers === 0) {
+        connectionStatus.style.background = '#fff3e0';
+        connectionStatus.style.border = '2px solid #ff9800';
+        connectionIcon.textContent = '⚠️';
+        connectionText.textContent = 'Buscando peers WebRTC...';
+        connectionText.style.color = '#ff9800';
+    } else if (numPeers > 0 && downloadSpeed === 0) {
+        connectionStatus.style.background = '#e3f2fd';
+        connectionStatus.style.border = '2px solid #2196f3';
+        connectionIcon.textContent = '🔗';
+        connectionText.textContent = 'Conectado - Esperando datos';
+        connectionText.style.color = '#2196f3';
+    } else {
+        connectionStatus.style.background = '#e8f5e9';
+        connectionStatus.style.border = '2px solid #4caf50';
+        connectionIcon.textContent = '✅';
+        connectionText.textContent = 'Descargando!';
+        connectionText.style.color = '#4caf50';
+    }
 }
 
 // Manejar archivo torrent
@@ -133,6 +165,7 @@ function loadTorrent(torrentId) {
     progressBar.classList.add('active');
     stats.classList.add('active');
     controls.classList.add('active');
+    connectionStatus.style.display = 'block';
 
     // Inicializar progreso en 0
     progressFill.style.width = '0%';

@@ -169,5 +169,7 @@ Si encuentras bugs o quieres mejorar la aplicación, siéntete libre de:
 3. Enviar pull requests
 
 ---
+Probar con este enlace:
+magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c&dn=Big+Buck+Bunny
 
 **¡Disfruta del streaming! 🍿**

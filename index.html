@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Torrent Streamer</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Torrent Stream">
+
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23667eea' width='100' height='100' rx='20'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>🎬</text></svg>">
+
+    <!-- Description & Theme -->
+    <meta name="description" content="Reproduce archivos torrent en streaming sin descargar el contenido completo">
+    <meta name="theme-color" content="#667eea">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .status.active {
+            display: block;
+        }
+
+        .status.error {
+            background: #ffe0e0;
+            color: #cc0000;
+        }
+
+        .status.success {
+            background: #e0ffe0;
+            color: #008800;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .file-list {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .file-list.active {
+            display: block;
+        }
+
+        .file-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .file-item:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .file-item.selected {
+            background: #e6e9ff;
+            border-color: #667eea;
+        }
+
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        #player {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+            background: #000;
+        }
+
+        #player.active {
+            display: block;
+        }
+
+        .controls {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .controls.active {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .stats.active {
+            display: grid;
+        }
+
+        .stat-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Torrent Streamer</h1>
+
+        <div class="info-box">
+            <h3>📌 Cómo usar:</h3>
+            <p>1. Selecciona un archivo .torrent o magnet link</p>
+            <p>2. Espera a que se carguen los archivos</p>
+            <p>3. Selecciona el archivo que quieres reproducir</p>
+            <p>4. ¡Disfruta del streaming!</p>
+        </div>
+
+        <div class="info-box" style="background: #fff3e0; border-left-color: #ff9800;">
+            <h3 style="color: #ff9800;">⚠️ Formatos compatibles:</h3>
+            <p><strong>✅ Totalmente compatibles:</strong> MP4, WebM, MP3, WAV, OGG, M4A</p>
+            <p><strong>⚠️ Compatibilidad limitada:</strong> MKV, AVI (pueden no funcionar en todos los navegadores)</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">💡 <em>Recomendación: Usa torrents en formato MP4 para mejor compatibilidad</em></p>
+        </div>
+
+        <div class="upload-section">
+            <h3 style="margin-bottom: 10px; color: #667eea; font-size: 1.1em;">Opción 1: Archivo .torrent</h3>
+            <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">
+                Si tienes un archivo .torrent descargado, haz click aquí:
+            </p>
+            <div class="file-input-wrapper">
+                <button class="btn">📁 Seleccionar archivo .torrent</button>
+                <input type="file" id="torrentFile" accept=".torrent">
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 25px 0; color: #999; font-weight: bold;">
+            — O —
+        </div>
+
+        <div class="upload-section">
+            <h3 style="margin-bottom: 10px; color: #667eea; font-size: 1.1em;">Opción 2: Magnet Link</h3>
+            <p style="margin-bottom: 15px; color: #666; font-size: 0.9em;">
+                Si tienes un magnet link (empieza con "magnet:?xt=..."), pégalo aquí:
+            </p>
+            <input type="text" id="magnetLink" placeholder="magnet:?xt=urn:btih:..."
+                   style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; margin-bottom: 10px;">
+            <button class="btn" id="loadMagnet">🧲 Cargar Magnet Link</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="progressBar" class="progress-bar">
+            <div id="progressFill" class="progress-fill">0%</div>
+        </div>
+
+        <div id="stats" class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="downloadSpeed">0 KB/s</div>
+                <div class="stat-label">Descarga</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="uploadSpeed">0 KB/s</div>
+                <div class="stat-label">Subida</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="peers">0</div>
+                <div class="stat-label">Peers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="downloaded">0 MB</div>
+                <div class="stat-label">Descargado</div>
+            </div>
+        </div>
+
+        <div id="fileList" class="file-list"></div>
+
+        <video id="player" controls></video>
+
+        <div id="controls" class="controls">
+            <button class="btn btn-secondary" id="stopBtn">⏹️ Detener</button>
+            <button class="btn btn-danger" id="clearBtn">🗑️ Limpiar caché</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
